@@ -1,3 +1,4 @@
+
 let rub1 = document.querySelector(".rub1");
 let rub2 = document.querySelector(".rub2");
 let usd1 = document.querySelector(".usd1");
@@ -9,6 +10,25 @@ let gbp2 = document.querySelector(".gbp2");
 let buttonsLeft = document.querySelectorAll(".btn-left");
 let rightInput = document.querySelector(".right-input");
 let leftInput = document.querySelector(".left-input");
+let addBtn = document.querySelector(".addBtn");
+let newUl = null;
+addBtn.addEventListener("click", () => {
+    if (!newUl) {
+        newUl = document.createElement("ul");
+        newUl.classList.add("newUl");
+        let items = ["БАНК", "БИЗНЕС", "ИНВЕСТИЦИИ", "СТРАХОВАНИЕ", "МОБАЙЛ", "ПУТЕШЕСТВИЯ", "РАЗВЛЕЧЕНИЯ"];
+        items.forEach(item => {
+            let newLi = document.createElement("li");
+            newLi.classList.add("newLi")
+            newLi.textContent = item;
+            newUl.append(newLi);
+        });
+        mainDiv.insertBefore(newUl, mainDiv.children[0]);
+    } else {
+        newUl.remove();
+        newUl = null;
+    }
+});
 buttonsLeft.forEach(button => {
     button.addEventListener("click", () => {
         buttonsLeft.forEach(btn =>
@@ -31,7 +51,8 @@ buttonsRight.forEach(item => {
 let leftCounteiner = document.querySelector(".main-leftDiv-window");
 let rightCounteiner = document.querySelector(".main-rightDiv-window");
 let buttons = document.querySelectorAll(".btn")
-if (rub1.classList.contains("active-left") && usd2.classList.contains("active-right")) {
+function goOnline1(){
+    if (rub1.classList.contains("active-left") && usd2.classList.contains("active-right")) {
     fetch("https://v6.exchangerate-api.com/v6/21a684990e0c8cf9243ba46f/latest/RUB")
         .then(res => res.json()).then(dataRUB => {
             console.log(dataRUB);
@@ -85,7 +106,7 @@ function removeOnlyParagraphs(container) {
     let paragraphs = container.querySelectorAll("p");
     paragraphs.forEach(p => p.remove());
 }
-
+}
 
 leftInput.addEventListener("input", () => {
     leftInput.value = leftInput.value.replace(/[^0-9.,]/g, "");
@@ -102,162 +123,156 @@ rightInput.addEventListener("input", () => {
         rightInput.value = rightInput.value.replace(/\.$/, "");
     }
 });
+
+
+function goOnline() {
+    function valyutaSecimi1(baseLeft, baseRight) {
+        fetch(`https://v6.exchangerate-api.com/v6/21a684990e0c8cf9243ba46f/latest/${baseLeft}`)
+            .then(res => res.json())
+            .then(data => {
+                let conversionRate = data.conversion_rates[baseRight];
+
+                function convertValues() {
+                    if (conversionRate !== 1) {
+                        if (leftInput.value.trim() !== "") {
+                            rightInput.value = (leftInput.value * conversionRate).toFixed(5);
+                        } else if (rightInput.value.trim() !== "") {
+                            leftInput.value = (rightInput.value / conversionRate).toFixed(5);
+                        }
+                    } else {
+                        if (leftInput.value.trim() !== "") {
+                            rightInput.value = (leftInput.value * conversionRate).toFixed(0);
+                        } else if (rightInput.value.trim() !== "") {
+                            leftInput.value = (rightInput.value / conversionRate).toFixed(0);
+                        }
+                    }
+                }
+                leftInput.addEventListener("input", () => {
+                    if (leftInput.value.trim() !== "") {
+                        rightInput.value = (leftInput.value * conversionRate).toFixed(5);
+                    } else {
+                        rightInput.value = "";
+                    }
+                });
+                rightInput.addEventListener("input", () => {
+                    if (rightInput.value.trim() !== "") {
+                        leftInput.value = (rightInput.value / conversionRate).toFixed(5);
+                    } else {
+                        leftInput.value = "";
+                    }
+                });
+                convertValues();
+            });
+    }
+    fetch(`https://v6.exchangerate-api.com/v6/21a684990e0c8cf9243ba46f/latest/RUB`)
+        .then(res => res.json())
+        .then(data => {
+            console.log(data);
+            let conversionRate1 = data.conversion_rates.USD;
+            leftInput.addEventListener("input", () => {
+                if (leftInput.value.trim() !== "") {
+                    rightInput.value = (leftInput.value * conversionRate1).toFixed(5);
+                } else {
+                    rightInput.value = "";
+                }
+            });
+
+            rightInput.addEventListener("input", () => {
+                if (rightInput.value.trim() !== "") {
+                    leftInput.value = (rightInput.value / conversionRate1).toFixed(5);
+                } else {
+                    leftInput.value = "";
+                }
+            });
+
+            if (leftInput.value.trim() !== "") {
+                rightInput.value = (leftInput.value * conversionRate1).toFixed(5);
+            } else if (rightInput.value.trim() !== "") {
+                leftInput.value = (rightInput.value / conversionRate1).toFixed(5);
+            }
+        });
+    function yoxlaVeIcraEt1() {
+        let baseLeft = rub1.classList.contains("active-left") ? "RUB" :
+            eur1.classList.contains("active-left") ? "EUR" :
+            gbp1.classList.contains("active-left") ? "GBP" :
+            "USD";
+        let baseRight = rub2.classList.contains("active-right") ? "RUB" :
+            eur2.classList.contains("active-right") ? "EUR" :
+            gbp2.classList.contains("active-right") ? "GBP" :
+            "USD";
+        valyutaSecimi1(baseLeft, baseRight);
+    }
+    document.addEventListener("DOMContentLoaded", () => {
+        yoxlaVeIcraEt1();
+    });
+    buttons.forEach(item => {
+        item.addEventListener("click", () => {
+            yoxlaVeIcraEt1();
+        });
+    });
+    leftInput.addEventListener("input", () => {
+        yoxlaVeIcraEt1();
+    });
+    rightInput.addEventListener("input", () => {
+        yoxlaVeIcraEt1();
+    });
+};
+goOnline();
 let mainDiv = document.querySelector(".main-Div")
 let msg = document.createElement("p")
 function internet() {
     if (navigator.onLine === false) {
         leftInput.value = "";
-        rightInput.value = "";
+        rightInput.value = "";        
         msg.style.display = "block";
         msg.classList.add("msg");
         msg.textContent = "Нет подключения к Интернету";
-        mainDiv.insertBefore(msg,mainDiv.children[1])
-        function valyutaSecimi2(baseLeft, baseRight) {
-            if (baseLeft === baseRight) {
-                leftInput.addEventListener("input", () => {
+        mainDiv.insertBefore(msg, mainDiv.children[1]);
+        function goOfline() {
+            function valyutaSecimi2(baseLeft, baseRight) {
+                if (baseLeft === baseRight) {
                     rightInput.value = leftInput.value;
-                });
-                rightInput.addEventListener("input", () => {
-                    leftInput.value = rightInput.value;
-                });
-            } else {
-                leftInput.addEventListener("input", () => {
+                } else {
                     rightInput.value = "";
-                });
-                rightInput.addEventListener("input", () => {
-                    leftInput.value = "";
-                });
+                }
             }
-        }
-        let baseLeft = rub1.classList.contains("active-left") ? "RUB" :
-            eur1.classList.contains("active-left") ? "EUR" :
-                gbp1.classList.contains("active-left") ? "GBP" :
-                    "USD";
-
-        let baseRight = rub2.classList.contains("active-right") ? "RUB" :
-            eur2.classList.contains("active-right") ? "EUR" :
-                gbp2.classList.contains("active-right") ? "GBP" :
-                    "USD";
-
-       
-        valyutaSecimi2(baseLeft, baseRight);
-
-        buttons.forEach(item => {
-            item.addEventListener("click", () => {
+            function yoxlaVeIcraEt() {
                 let baseLeft = rub1.classList.contains("active-left") ? "RUB" :
                     eur1.classList.contains("active-left") ? "EUR" :
-                        gbp1.classList.contains("active-left") ? "GBP" :
-                            "USD";
-
+                    gbp1.classList.contains("active-left") ? "GBP" :
+                    "USD";
+        
                 let baseRight = rub2.classList.contains("active-right") ? "RUB" :
                     eur2.classList.contains("active-right") ? "EUR" :
-                        gbp2.classList.contains("active-right") ? "GBP" :
-                            "USD";
-
+                    gbp2.classList.contains("active-right") ? "GBP" :
+                    "USD";
                 valyutaSecimi2(baseLeft, baseRight);
+            }
+            document.addEventListener("DOMContentLoaded", () => {
+                yoxlaVeIcraEt();
             });
-        });
-
-
-    } else {
-        msg.style.display = "none"
-        if (rub1.classList.contains("active-left") && usd2.classList.contains("active-right")) {
-            fetch(`https://v6.exchangerate-api.com/v6/21a684990e0c8cf9243ba46f/latest/RUB`)
-                .then(res => res.json())
-                .then(data => {
-                    console.log(data)
-                    let conversionRate1 = data.conversion_rates.USD;
-                    leftInput.addEventListener("input", () => {
-                        if (leftInput.value.trim() !== "") {
-                            rightInput.value = (leftInput.value * conversionRate1).toFixed(5);
-
-                        } else {
-                            rightInput.value = ""
-                        }
-
-                    });
-                    rightInput.addEventListener("input", () => {
-                        if (rightInput.value.trim() !== "") {
-                            leftInput.value = (rightInput.value / conversionRate1).toFixed(5);
-                        } else {
-                            leftInput.value = ""
-                        }
-                    });
-                })
-        }
-        function valyutaSecimi1(baseLeft, baseRight) {
-            fetch(`https://v6.exchangerate-api.com/v6/21a684990e0c8cf9243ba46f/latest/${baseLeft}`)
-                .then(res => res.json())
-                .then(data => {
-                    let conversionRate = data.conversion_rates[baseRight];
-                    function convertValues() {
-                        if (conversionRate !== 1) {
-                            if (leftInput.value.trim() !== "") {
-                                rightInput.value = (leftInput.value * conversionRate).toFixed(5);
-                            } else if (rightInput.value.trim() !== "") {
-                                leftInput.value = (rightInput.value / conversionRate).toFixed(5);
-                            }
-                        } else if (conversionRate === 1) {
-                            if (leftInput.value.trim() !== "") {
-                                rightInput.value = (leftInput.value * conversionRate).toFixed(0);
-                            } else if (rightInput.value.trim() !== "") {
-                                leftInput.value = (rightInput.value / conversionRate).toFixed(0);
-                            }
-                        }
-
-                    }
-                    leftInput.addEventListener("input", () => {
-                        if (leftInput.value.trim() !== "") {
-                            rightInput.value = (leftInput.value * conversionRate).toFixed(5);
-                        } else {
-                            rightInput.value = "";
-                        }
-                    });
-                    rightInput.addEventListener("input", () => {
-                        if (rightInput.value.trim() !== "") {
-                            leftInput.value = (rightInput.value / conversionRate).toFixed(5);
-                        } else {
-                            leftInput.value = "";
-                        }
-                    });
-                    convertValues();
+            buttons.forEach(item => {
+                item.addEventListener("click", () => {
+                    yoxlaVeIcraEt(); 
                 });
-        }
-        buttons.forEach(item => {
-            item.addEventListener("click", () => {
-                let baseLeft = rub1.classList.contains("active-left") ? "RUB" :
-                    eur1.classList.contains("active-left") ? "EUR" :
-                        gbp1.classList.contains("active-left") ? "GBP" :
-                            "USD";
-                let baseRight = rub2.classList.contains("active-right") ? "RUB" :
-                    eur2.classList.contains("active-right") ? "EUR" :
-                        gbp2.classList.contains("active-right") ? "GBP" :
-                            "USD";
-                valyutaSecimi1(baseLeft, baseRight);
             });
-        });
-
+            leftInput.addEventListener("input", () => {
+                yoxlaVeIcraEt();
+            });
+            rightInput.addEventListener("input", () => {
+                yoxlaVeIcraEt();
+            });
+        }
+        goOfline();
+    }
+     else {
+        msg.style.display = "none";
+        goOnline1()
+        goOnline();
     }
 }
+
 internet();
 window.addEventListener("online", internet);
 window.addEventListener("offline", internet);
-let addBtn = document.querySelector(".addBtn");
-let newUl = null; 
-addBtn.addEventListener("click", () => {
-    if (!newUl) {
-        newUl = document.createElement("ul");
-        newUl.classList.add("newUl");
-        let items = ["БАНК","БИЗНЕС","ИНВЕСТИЦИИ", "СТРАХОВАНИЕ","МОБАЙЛ","ПУТЕШЕСТВИЯ","РАЗВЛЕЧЕНИЯ"];
-        items.forEach(item => {
-            let newLi = document.createElement("li");
-            newLi.classList.add("newLi")
-            newLi.textContent = item;
-            newUl.append(newLi);
-        });
-        mainDiv.insertBefore(newUl, mainDiv.children[0]);
-    } else {
-        newUl.remove();
-        newUl = null;
-    }
-});
+
