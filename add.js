@@ -51,61 +51,61 @@ buttonsRight.forEach(item => {
 let leftCounteiner = document.querySelector(".main-leftDiv-window");
 let rightCounteiner = document.querySelector(".main-rightDiv-window");
 let buttons = document.querySelectorAll(".btn")
-function goOnline1(){
+function goOnline1() {
     if (rub1.classList.contains("active-left") && usd2.classList.contains("active-right")) {
-    fetch("https://v6.exchangerate-api.com/v6/21a684990e0c8cf9243ba46f/latest/RUB")
-        .then(res => res.json()).then(dataRUB => {
-            console.log(dataRUB);
-            let newLeftP = document.createElement("p");
-            newLeftP.classList.add("p")
-            let usd = dataRUB.conversion_rates.USD
-            newLeftP.textContent = `1 RUB= ${usd} USD`
-            leftCounteiner.append(newLeftP)
+        fetch("https://v6.exchangerate-api.com/v6/37caf4172e88cd986533b3f4/latest/RUB")
+            .then(res => res.json()).then(dataRUB => {
+                console.log(dataRUB);
+                let newLeftP = document.createElement("p");
+                newLeftP.classList.add("p")
+                let usd = dataRUB.conversion_rates.USD
+                newLeftP.textContent = `1 RUB= ${usd} USD`
+                leftCounteiner.append(newLeftP)
+            })
+        fetch("https://v6.exchangerate-api.com/v6/37caf4172e88cd986533b3f4/latest/USD")
+            .then(res => res.json()).then(dataUSD => {
+                let newRightP = document.createElement("p");
+                newRightP.classList.add("p")
+                let rub = dataUSD.conversion_rates.RUB
+                newRightP.textContent = `1 USD= ${rub} RUB`
+                rightCounteiner.append(newRightP)
+            })
+    }
+    function valyuta(esasValyuta, hedefValyuta, container, text) {
+        fetch(`https://v6.exchangerate-api.com/v6/37caf4172e88cd986533b3f4/latest/${esasValyuta}`)
+            .then(res => res.json()).then(data => {
+                console.log(data)
+                let deyer = data.conversion_rates[hedefValyuta]
+                let newP = document.createElement("p");
+                newP.classList.add("p");
+                newP.textContent = text.replace("{deyer}", deyer);
+                container.append(newP);
+                console.log(container)
+            })
+    }
+    function valyutaSecimi(baseLeft, baseRight, leftCounteiner, rightCounteiner) {
+        removeOnlyParagraphs(leftCounteiner);
+        removeOnlyParagraphs(rightCounteiner);
+        valyuta(baseLeft, baseRight, leftCounteiner, `1 ${baseLeft} = {deyer} ${baseRight}`);
+        valyuta(baseRight, baseLeft, rightCounteiner, `1 ${baseRight} = {deyer} ${baseLeft}`);
+    }
+    buttons.forEach(item => {
+        item.addEventListener("click", () => {
+            let baseLeft = rub1.classList.contains("active-left") ? "RUB" :
+                eur1.classList.contains("active-left") ? "EUR" :
+                    gbp1.classList.contains("active-left") ? "GBP" :
+                        "USD";
+            let baseRight = rub2.classList.contains("active-right") ? "RUB" :
+                eur2.classList.contains("active-right") ? "EUR" :
+                    gbp2.classList.contains("active-right") ? "GBP" :
+                        "USD";
+            valyutaSecimi(baseLeft, baseRight, leftCounteiner, rightCounteiner);
         })
-    fetch("https://v6.exchangerate-api.com/v6/21a684990e0c8cf9243ba46f/latest/USD")
-        .then(res => res.json()).then(dataUSD => {
-            let newRightP = document.createElement("p");
-            newRightP.classList.add("p")
-            let rub = dataUSD.conversion_rates.RUB
-            newRightP.textContent = `1 USD= ${rub} RUB`
-            rightCounteiner.append(newRightP)
-        })
-}
-function valyuta(esasValyuta, hedefValyuta, container, text) {
-    fetch(`https://v6.exchangerate-api.com/v6/21a684990e0c8cf9243ba46f/latest/${esasValyuta}`)
-        .then(res => res.json()).then(data => {
-            console.log(data)
-            let deyer = data.conversion_rates[hedefValyuta]
-            let newP = document.createElement("p");
-            newP.classList.add("p");
-            newP.textContent = text.replace("{deyer}", deyer);
-            container.append(newP);
-            console.log(container)
-        })
-}
-function valyutaSecimi(baseLeft, baseRight, leftCounteiner, rightCounteiner) {
-    removeOnlyParagraphs(leftCounteiner);
-    removeOnlyParagraphs(rightCounteiner);
-    valyuta(baseLeft, baseRight, leftCounteiner, `1 ${baseLeft} = {deyer} ${baseRight}`);
-    valyuta(baseRight, baseLeft, rightCounteiner, `1 ${baseRight} = {deyer} ${baseLeft}`);
-}
-buttons.forEach(item => {
-    item.addEventListener("click", () => {
-        let baseLeft = rub1.classList.contains("active-left") ? "RUB" :
-            eur1.classList.contains("active-left") ? "EUR" :
-                gbp1.classList.contains("active-left") ? "GBP" :
-                    "USD";
-        let baseRight = rub2.classList.contains("active-right") ? "RUB" :
-            eur2.classList.contains("active-right") ? "EUR" :
-                gbp2.classList.contains("active-right") ? "GBP" :
-                    "USD";
-        valyutaSecimi(baseLeft, baseRight, leftCounteiner, rightCounteiner);
     })
-})
-function removeOnlyParagraphs(container) {
-    let paragraphs = container.querySelectorAll("p");
-    paragraphs.forEach(p => p.remove());
-}
+    function removeOnlyParagraphs(container) {
+        let paragraphs = container.querySelectorAll("p");
+        paragraphs.forEach(p => p.remove());
+    }
 }
 
 leftInput.addEventListener("input", () => {
@@ -128,7 +128,7 @@ goOnline1()
 
 function goOnline() {
     function valyutaSecimi1(baseLeft, baseRight) {
-        fetch(`https://v6.exchangerate-api.com/v6/21a684990e0c8cf9243ba46f/latest/${baseLeft}`)
+        fetch(`https://v6.exchangerate-api.com/v6/37caf4172e88cd986533b3f4/latest/${baseLeft}`)
             .then(res => res.json())
             .then(data => {
                 let conversionRate = data.conversion_rates[baseRight];
@@ -165,7 +165,7 @@ function goOnline() {
                 convertValues();
             });
     }
-    fetch(`https://v6.exchangerate-api.com/v6/21a684990e0c8cf9243ba46f/latest/RUB`)
+    fetch(`https://v6.exchangerate-api.com/v6/37caf4172e88cd986533b3f4/latest/RUB`)
         .then(res => res.json())
         .then(data => {
             console.log(data);
@@ -195,12 +195,12 @@ function goOnline() {
     function yoxlaVeIcraEt1() {
         let baseLeft = rub1.classList.contains("active-left") ? "RUB" :
             eur1.classList.contains("active-left") ? "EUR" :
-            gbp1.classList.contains("active-left") ? "GBP" :
-            "USD";
+                gbp1.classList.contains("active-left") ? "GBP" :
+                    "USD";
         let baseRight = rub2.classList.contains("active-right") ? "RUB" :
             eur2.classList.contains("active-right") ? "EUR" :
-            gbp2.classList.contains("active-right") ? "GBP" :
-            "USD";
+                gbp2.classList.contains("active-right") ? "GBP" :
+                    "USD";
         valyutaSecimi1(baseLeft, baseRight);
     }
     document.addEventListener("DOMContentLoaded", () => {
@@ -224,7 +224,7 @@ let msg = document.createElement("p")
 function internet() {
     if (navigator.onLine === false) {
         leftInput.value = "";
-        rightInput.value = "";        
+        rightInput.value = "";
         msg.style.display = "block";
         msg.classList.add("msg");
         msg.textContent = "Нет подключения к Интернету";
@@ -240,13 +240,13 @@ function internet() {
             function yoxlaVeIcraEt() {
                 let baseLeft = rub1.classList.contains("active-left") ? "RUB" :
                     eur1.classList.contains("active-left") ? "EUR" :
-                    gbp1.classList.contains("active-left") ? "GBP" :
-                    "USD";
-        
+                        gbp1.classList.contains("active-left") ? "GBP" :
+                            "USD";
+
                 let baseRight = rub2.classList.contains("active-right") ? "RUB" :
                     eur2.classList.contains("active-right") ? "EUR" :
-                    gbp2.classList.contains("active-right") ? "GBP" :
-                    "USD";
+                        gbp2.classList.contains("active-right") ? "GBP" :
+                            "USD";
                 valyutaSecimi2(baseLeft, baseRight);
             }
             document.addEventListener("DOMContentLoaded", () => {
@@ -254,7 +254,7 @@ function internet() {
             });
             buttons.forEach(item => {
                 item.addEventListener("click", () => {
-                    yoxlaVeIcraEt(); 
+                    yoxlaVeIcraEt();
                 });
             });
             leftInput.addEventListener("input", () => {
@@ -266,7 +266,7 @@ function internet() {
         }
         goOfline();
     }
-     else {
+    else {
         msg.style.display = "none";
         goOnline();
     }
