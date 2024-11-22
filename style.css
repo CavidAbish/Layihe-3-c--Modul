@@ -135,7 +135,7 @@ header{
     border:none;
     font-size: 30px;
     margin-bottom: 8px;
-    /* display:none; */
+    display:none;
 }
 .p{
     margin-left:15px;
