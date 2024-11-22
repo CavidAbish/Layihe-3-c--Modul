@@ -123,6 +123,7 @@ rightInput.addEventListener("input", () => {
         rightInput.value = rightInput.value.replace(/\.$/, "");
     }
 });
+goOnline1()
 
 
 function goOnline() {
@@ -267,7 +268,6 @@ function internet() {
     }
      else {
         msg.style.display = "none";
-        goOnline1()
         goOnline();
     }
 }
